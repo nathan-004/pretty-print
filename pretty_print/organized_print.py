@@ -33,7 +33,7 @@ class Row(list):
 class OrganizedPrint(list):
     """Class for organized printing in the terminal."""
 
-    def __init__(self, cell_width: int = 1, cell_height: int = 1, width:Optional[int] = None, height:Optional[int] = None):
+    def __init__(self, cell_width: int = 1, cell_height: int = 1, width:Optional[int] = None, height:Optional[int] = None, cell_overflow: Optional[str] = "normal") -> None:
         """
         Initialize the OrganizedPrint with the number of divisions.
         
@@ -42,11 +42,13 @@ class OrganizedPrint(list):
             cell_height (int): Number of rows.
             width (int): Width of the organized print table in percentage -> default is content width
             height (int): Height of the organized print table in percentage -> default is content height
+            cell_overflow (str): How to handle overflow in cells. Options: "normal", "truncate". Default is "normal".
         """
         table = [Row([Cell() for _ in range(cell_width)]) for _ in range(cell_height)]
         self.cell_width = cell_width
         self.cell_height = cell_height
         self.percent_width, self.percent_height = width,  height
+        self.cell_overflow = cell_overflow
         super().__init__(table)
 
     def current_cell_width(self, column_index: int) -> int:
@@ -71,12 +73,13 @@ class OrganizedPrint(list):
         """Return a string representation of the organized print table."""
         output = []
         
-        for row in self:
+        for row_idx, row in enumerate(self):
             row_output = []
-            for cell in row:
+            for cell_idx, cell in enumerate(row):
                 # Ensure the content fits within the cell width
-                cell_content = cell.content.ljust(self.current_cell_width(row.index(cell)))
+                cell_content = self.get_value(row_idx, cell_idx)
                 row_output.append(cell_content)
+            print(row_output)
             output.append("   ".join(row_output))
 
         return "\n".join(output)
@@ -92,6 +95,10 @@ class OrganizedPrint(list):
         else:
             raise ValueError("Value must be an instance of Row")
     
+    # -----------------------------------------------------
+    # Helper methods
+    # -----------------------------------------------------
+
     def get_max_length_colums(self, column_index: int) -> int:
         """Get the maximum element length in a specific column."""
         maximum_length = 0
@@ -101,10 +108,24 @@ class OrganizedPrint(list):
                 maximum_length = len(self[y][column_index].content)
         
         return maximum_length
+    
+    def get_value(self, row: int, col: int) -> str:
+        """Get the content of a specific cell."""
+        if not (row < self.cell_height and col < self.cell_width):
+            return ""
+        
+        cell = self[row][col]
+        col_size = self.current_cell_width(col)
+
+        if col_size < len(cell.content):
+            if self.percent_width is None:
+                return cell.content.ljust(col_size)
+        
+        return cell.content.ljust(col_size)
 
 def main():
     """Main function to demonstrate organized printing."""
-    op = OrganizedPrint(4, 5, width=50)
+    op = OrganizedPrint(4, 5, width=25)
     op[0] = ["Header 1", "Header 2", "Header 3", "Header 4"]
     op[1][0] = "Test"
     op[2][1] = "This is a test"
