@@ -1,3 +1,3 @@
-from pretty_print.organized_print import main
+from pretty_print.color_print import main
 
 main()

@@ -48,7 +48,6 @@ class Row(list):
     
     def __setitem__(self, index, value):
         """Set a cell at a specific index."""
-        print(index)
         if isinstance(value, Cell):
             self.set_item(index, value)
         elif isinstance(value, str):
@@ -58,7 +57,6 @@ class Row(list):
     
     def set_item(self, index:Union[int, slice], value):
         """Set an item"""
-        print(index)
         if isinstance(index, int):
             super().__setitem__(index, value)
         elif isinstance(index, slice):
@@ -116,8 +114,7 @@ class OrganizedPrint(list):
                 # Ensure the content fits within the cell width
                 cell_content = self.get_value(row_idx, cell_idx)
                 row_output.append(cell_content)
-            print(row_output)
-            output.append("   ".join(row_output))
+            output.append(" | ".join(row_output))
 
         return "\n".join(output)
     
@@ -131,8 +128,6 @@ class OrganizedPrint(list):
             self.set_item(index, Row([Cell(content) for content in value]))
         else:
             raise ValueError(f"Value must be an instance of Row not {type(value)}")
-        
-        print(super().__repr__())
 
     def set_item(self, index:Union[int, slice], value):
         """Set an item"""
@@ -149,7 +144,6 @@ class OrganizedPrint(list):
             return RowRangeView(self, index)
         else:
             return super().__getitem__(index)
-        
     
     # -----------------------------------------------------
     # Helper methods
@@ -181,12 +175,11 @@ class OrganizedPrint(list):
 
 def main():
     """Main function to demonstrate organized printing."""
-    op = OrganizedPrint(4, 5, width=25)
+    op = OrganizedPrint(4, 5, width=50)
     op[0] = ["Header 1", "Header 2", "Header 3", "Header 4"]
-    op[1][0] = "Test"
+    op[1][0:] = "Test"
     op[2][1] = "This is a test"
     op[3][2] = "Another test"
     op[4][3] = "Final test"
-    print("FINALLLLLLLLLLLLLLLLLLLLLL")
     op[3:5][0:2] = "Test"
     print(op)
