@@ -86,12 +86,14 @@ class OrganizedPrint(list):
         self.cell_overflow = cell_overflow
         super().__init__(table)
 
+        self.between_cell_col = " | " 
+
     def current_cell_width(self, column_index: int) -> int:
         """Get the width of a specific cell."""
         if self.percent_width is None:
             w_size = self.get_max_length_colums(column_index)
         else:
-            w_size = int(self.percent_width * get_terminal_size()[0] / 100 / self.cell_width)
+            w_size = int(self.percent_width * (get_terminal_size()[0] - len(self.between_cell_col) * (self.cell_width - 1)) / 100 / self.cell_width)
 
         return w_size
 
@@ -175,7 +177,7 @@ class OrganizedPrint(list):
 
 def main():
     """Main function to demonstrate organized printing."""
-    op = OrganizedPrint(4, 5, width=50)
+    op = OrganizedPrint(4, 5, width=100)
     op[0] = ["Header 1", "Header 2", "Header 3", "Header 4"]
     op[1][0:] = "Test"
     op[2][1] = "This is a test"

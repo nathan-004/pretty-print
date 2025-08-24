@@ -25,7 +25,7 @@ def style_print(*args, format:bool = False, end:str = "\n", separator:str = " ",
     to_print = ''.join(styles) + to_print
 
     if format:
-        to_print = to_print.format(TextColors=TextColors)
+        to_print = to_print.format(TextColors=TextColors, Styles=Styles, BackgroundColors=BackgroundColors)
 
     if reset:
         to_print += Styles.RESET
