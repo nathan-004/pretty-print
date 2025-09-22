@@ -5,12 +5,21 @@ from pretty_print.utils.terminal_size import get_terminal_size
 class Cell:
     """Class representing a cell in the organized print table."""
     
-    def __init__(self, content: str = "", size: tuple[int, int] = (1, 1)):
+    def __init__(self, content: str = "", size: tuple[int, int] = (1, 1), content_separator:str = " "):
         self.content = content
-        self.size = size
+        self.content_size = size
+        self.words = self.content.split(content_separator)
+        self.words_size = len(self.words)
 
-    def __repr__(self):
-        return f"{self.content}"
+    def __repr__(self, position:Optional[tuple[int,int]] = None) -> str:
+        """
+        Position is the position of the current part of the cell
+        If position is not specified, it repeats the content
+        """
+        if position is None:
+            return f"{self.content}"
+        start_content_idx = position[0] + position[1] + 1 // self.content_size[0] * self.content_size[1]
+        return str(start_content_idx)
 
 class RowRangeView:
     """Vue sur plusieurs lignes (row slice)."""
@@ -177,7 +186,7 @@ class OrganizedPrint(list):
 
 def main():
     """Main function to demonstrate organized printing."""
-    op = OrganizedPrint(4, 5, width=100)
+    op = OrganizedPrint(4, 5, width=50)
     op[0] = ["Header 1", "Header 2", "Header 3", "Header 4"]
     op[1][0:] = "Test"
     op[2][1] = "This is a test"
