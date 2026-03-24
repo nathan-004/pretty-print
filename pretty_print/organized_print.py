@@ -186,7 +186,7 @@ class OrganizedPrint(list):
 
 def main():
     """Main function to demonstrate organized printing."""
-    op = OrganizedPrint(4, 5, width=50)
+    op = OrganizedPrint(4, 5, width=100)
     op[0] = ["Header 1", "Header 2", "Header 3", "Header 4"]
     op[1][0:] = "Test"
     op[2][1] = "This is a test"
